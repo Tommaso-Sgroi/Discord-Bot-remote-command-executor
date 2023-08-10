@@ -74,7 +74,7 @@ class TargetCommand(Command):
 
         if all_ in target:
             target = all_
-        self.target = self.get_targets(target)  # here there is TEMPLATE METHOD PATTERN
+        self.target = self.get_targets(target)  # TEMPLATE METHOD PATTERN
 
     def __str__(self):
         targets = 'Targets affected: ['

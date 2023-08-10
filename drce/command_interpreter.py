@@ -144,7 +144,7 @@ class DistroyInterpreter:
         values[target_] = DistroyToken(args.target) if args.target is not None else VoidToken()
         values[to_] = DistroyToken(args.to) if args.to is not None else VoidToken()
 
-        return DistroyInterpreter._command_factory.create_command(values)
+        return self._command_factory.create_command(values)
 
     # --target 871629604073373706 --action unban --type user --where 829700927418007553
 

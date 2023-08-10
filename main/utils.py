@@ -19,7 +19,7 @@ def create_custom_logger(logger_name, log_file=None):
         handler = logging.StreamHandler(sys.stdout)  # Log messages will be sent to the console
     else:
         # Alternatively, you can use a FileHandler to send log messages to a file:
-        handler = logging.FileHandler(log_file)
+        handler = logging.FileHandler(log_file, encoding='utf-8', mode='a')
 
     # Create a formatter to format log messages
     formatter = logging.Formatter("[%(asctime)s] [%(threadName)s] [%(levelname)s] %(message)s")

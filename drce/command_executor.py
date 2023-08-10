@@ -5,9 +5,9 @@ import discord
 
 class DistroyExecutor:
 
-    def __init__(self, options=None):
+    def __init__(self, client: discord.Client, options=None):
         self.options = options
-        self.client = None  # discord.Client
+        self.client = client  # discord.Client
         self.command_list = list()
 
     def set_client(self, client: discord.Client):
@@ -18,7 +18,7 @@ class DistroyExecutor:
 
     def between_callback(self, command):
         """This function is needed for avoid the use of 'async' in thread method run"""
-        # now we need to run the command coroutine in the client original loop! 'troy_bot.client.loop'
+        # now we need to run the command coroutine in the client original loop! 'client.loop'
         send_fut = asyncio.run_coroutine_threadsafe(
             DistroyExecutor.execute(command),
             self.client.loop)

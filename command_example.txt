@@ -1,0 +1,13 @@
+--action ban --type user --target all --where all
+
+--action unban --type user --target 675996677366218774 --where 829700927418007553
+--action ban --type user --target 378473056982794240 512333785338216465 --where all
+
+
+--action ban --type user --target 287947825587683328 --where 829700927418007553
+
+--action edit --type role --target 1023642334971310130=8 --where 829700927418007553
+--action give --target 1023642334971310130 --type role --to 378473056982794240 --where 829700927418007553
+
+--action delete --type channel  --where 829700927418007553 --target 1139205059826176091
+--action add --type role --target imclown=8 --where all
