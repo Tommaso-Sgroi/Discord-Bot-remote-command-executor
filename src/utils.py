@@ -1,6 +1,6 @@
 import sys
 
-from main.distroy import DiscordRemoteCommandExecutor
+from src.distroy import DiscordRemoteCommandExecutor
 import drce.utils
 import logging
 

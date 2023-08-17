@@ -6,20 +6,6 @@ from discord import Permissions
 from drce.commands.commands_archetypes import *
 
 
-# class MakeRoleCommand(Command):
-#     def __init__(self, guild: discord.Guild, name: str, permissions: Permissions):
-#         Command.__init__(self, guild)
-#         self.name = name
-#         self.permission = permissions
-#
-#     async def run(self):
-#         try:
-#             await self.guild.create_role(name=self.name, permissions=self.permission)
-#         except:
-#             print(f"Some error occurred while making {self.name} role")
-#             return
-#         print(f"successfully made {self.name} role")
-
 class RoleCommand(TargetCommand, ABC):
 
     def __init__(self, client, guild, roles_id):
@@ -31,10 +17,8 @@ class RoleCommand(TargetCommand, ABC):
             if roles_id == all_:
                 roles.extend(guild.roles)
             else:
-                for target in roles_id:
-                    role = guild.get_role(target)
-                    if role is not None:
-                        roles.append(role)
+                roles = [guild.get_role(target) for target in roles_id if guild.get_role(target) is not None]
+
         return roles
 
 
@@ -78,7 +62,7 @@ class EditRoleCommand(RoleCommand):
         return RoleCommand.__str__(self) + f'\nWith permission: {self.permissions}'
 
     def get_permission(self):
-        return self.permissions if type(self.permissions) is int else int(self.permissions)
+        return int(self.permissions)  # if type(self.permissions) is int else int(self.permissions)
 
     async def run(self):
         for role in self.target:

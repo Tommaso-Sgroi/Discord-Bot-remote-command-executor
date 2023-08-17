@@ -10,7 +10,7 @@ class Command(abc.ABC):
     Represent a general command that can be executed
     """
 
-    def __init__(self, client, guild):
+    def __init__(self, client, guild: list):
         self.client = client
         # print(guild, troy_bot.client.get_guild(guild))
         self.string_log = str(self.__class__.__name__) + " "

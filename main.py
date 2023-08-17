@@ -1,5 +1,5 @@
-from main.main import start
-from main.options import fetch_options
+from src.main import start
+from src.options import fetch_options
 
 if __name__ == "__main__":
     start(fetch_options())
