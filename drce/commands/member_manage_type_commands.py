@@ -96,7 +96,7 @@ class UnbanCommand(UserCommand):
         target = self.target
         self.target = []
         for guild in self.guild:
-            if target == all_:
+            if all_ in target:
                 self.target.append((guild, [ban_entry.user for ban_entry in await guild.bans()]))
             else:
                 for ban_entry in [entry async for entry in guild.bans(limit=2000)]:

@@ -15,12 +15,10 @@ class Command(abc.ABC):
         # print(guild, troy_bot.client.get_guild(guild))
         self.string_log = str(self.__class__.__name__) + " "
         self.logger: logging.Logger = None
-        if "".join(guild) == all_:
+        if all_ in guild:
             self.guild = list(client.guilds)
         else:
-            self.guild = []
-            for g in guild:
-                self.guild.append(client.get_guild(int(g)))
+            self.guild = [self.client.get_guild(int(g)) for g in guild]
 
     def __str__(self):
         name = type(self).__name__
