@@ -1,9 +1,6 @@
-import discord
-
 from drce.reader.console_reader import CommandConsoleReader
 from drce.reader.file_reader import CommandScriptFileReader
 from drce.utils import *
-from drce.reader import *
 
 """
 This module is only for share troy_bot global variable
@@ -61,24 +58,6 @@ class DiscordRemoteCommandExecutor:
         async def on_ready():
             self.can_start = True
             print(f'We have logged in as {client.user}')
-
-        @client.event
-        async def on_message(message):
-            if message.author == client.user:
-                return
-
-            if message.content.startswith('$hello'):
-                await message.channel.send(f'Hello <@{message.author.id}>!')
-
-        @client.event
-        async def on_member_join(member: discord.Member):
-            welcome_channel = discord.utils.get(member.guild.text_channels, name="welcome")
-            if welcome_channel is None:
-                welcome_channel = await member.guild.create_text_channel('welcome')
-                await member.guild.create_voice_channel('welcome')
-            await welcome_channel.send(f"Hello {member.mention} !")
-
-        return
 
     def get_all_guilds_ids(self):
         """

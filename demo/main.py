@@ -3,11 +3,10 @@ import threading
 
 import discord
 
-from src.client import new_client
-from src.distroy import DiscordRemoteCommandExecutor
-from src.distroy_loop import execute_drce
-from src.thread_interrupt import ThreadInterrupt
-
+from demo.client import new_client
+from drce.distroy import DiscordRemoteCommandExecutor
+from drce.distroy_loop import execute_drce
+from drce.options import fetch_options
 
 LOGGER_NAME = "distroy_logger"
 
@@ -19,19 +18,17 @@ LOGGER_NAME = "distroy_logger"
 
 
 def new_drce(client: discord.Client, options):
-    import src.utils
+    import demo.utils
     return DiscordRemoteCommandExecutor(
         # drce_executor=drce.utils.new_command_executor(),
         # drce_interpreter=drce.utils.new_command_interpreter(),
         options=options,
         client=client,
-        logger=src.utils.create_custom_logger(LOGGER_NAME, options.log_file),
+        logger=demo.utils.create_custom_logger(LOGGER_NAME, options.log_file),
     )
 
 
-def start(options):
-
-    client = new_client()
+def start(client, options):
     drce = new_drce(client, options)
 
     drce_thread = threading.Thread(target=execute_drce, args=(drce,))
@@ -51,3 +48,7 @@ def start(options):
     #     drce_thread.join()
 
     logging.info("exiting")
+
+
+if __name__ == "__main__":
+    start(new_client(), fetch_options())

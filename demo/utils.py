@@ -1,7 +1,5 @@
 import sys
 
-from src.distroy import DiscordRemoteCommandExecutor
-import drce.utils
 import logging
 
 LOGGER_NAME = "distroy_logger"

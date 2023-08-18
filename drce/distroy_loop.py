@@ -1,9 +1,9 @@
 import asyncio
 
-import src.distroy
+import drce.distroy
 
 
-def wait_for_bot_start(drce_bot: src.distroy.DiscordRemoteCommandExecutor):
+def wait_for_bot_start(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
     """Busy waiting for discord bot starting"""
     import time
     while not drce_bot.can_start:
@@ -11,7 +11,7 @@ def wait_for_bot_start(drce_bot: src.distroy.DiscordRemoteCommandExecutor):
         time.sleep(0.5)
 
 
-def execute_drce(drce_bot: src.distroy.DiscordRemoteCommandExecutor):
+def execute_drce(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
     interpreter = drce_bot.command_interpreter
     executor = drce_bot.command_executor
     wait_for_bot_start(drce_bot)
