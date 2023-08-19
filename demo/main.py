@@ -3,12 +3,12 @@ import threading
 
 import discord
 
-from demo.client import new_client
+from demo.bot import new_client
 from drce.distroy import DiscordRemoteCommandExecutor
 from drce.distroy_loop import execute_drce
 from drce.options import fetch_options
 
-LOGGER_NAME = "distroy_logger"
+LOGGER_NAME = "drce_logger"
 
 
 # def signal_handler(sig, _):

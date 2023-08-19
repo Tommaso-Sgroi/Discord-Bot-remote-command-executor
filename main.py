@@ -1,4 +1,4 @@
-from demo.client import new_client
+from demo.bot import new_client
 from demo.main import start
 from drce.options import fetch_options
 
