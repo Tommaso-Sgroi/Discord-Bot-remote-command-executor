@@ -38,6 +38,7 @@ def start(client, options):
     drce_thread.start()
 
     drce.logger.info("your bot is starting...")
+
     drce.run_client()
 
     # try:

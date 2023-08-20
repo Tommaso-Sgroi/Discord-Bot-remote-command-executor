@@ -78,19 +78,22 @@ class DiscordRemoteCommandExecutor:
 
         if not hasattr(self.client, 'on_ready'):
             # Create a void on_ready method
-            async def empty_on_ready(*args, **kwargs):
+            async def empty_on_ready(*_, **__):
                 pass  # Empty async method
 
-            self.client.on_ready = empty_on_ready  # Create an empty method
+            # self.client.on_ready = empty_on_ready
+            setattr(self.client, 'on_ready', empty_on_ready())  # Create an empty method
 
         # Inject the client.on_ready method with the wrapped one
-        self.client.on_ready = inject_on_ready(self.client.on_ready)
+        # self.client.on_ready = inject_on_ready(self.client.on_ready)
+        setattr(self.client, 'on_ready', inject_on_ready(getattr(self.client, 'on_ready')))
 
     def set_options(self, options):
         self.options = options
 
     def set_client(self, client: discord.Client):
         self.client = client
+        self.inject_client_commands()
 
     def run_client(self):
         self.client.run(self.options.token)
