@@ -4,6 +4,7 @@ import threading
 import discord
 
 from demo.bot import new_client
+from demo.thread_interrupt import ThreadInterrupt
 from drce.distroy import DiscordRemoteCommandExecutor
 from drce.distroy_loop import execute_drce
 from drce.options import fetch_options
@@ -31,7 +32,7 @@ def new_drce(client: discord.Client, options):
 def start(client, options):
     drce = new_drce(client, options)
 
-    drce_thread = threading.Thread(target=execute_drce, args=(drce,))
+    drce_thread = threading.Thread(target=execute_drce, args=(drce,), daemon=True)
 
     # Start the threads
     drce.logger.info("DRCE starting...")
@@ -40,15 +41,14 @@ def start(client, options):
     drce.logger.info("your bot is starting...")
 
     drce.run_client()
+    try:
+        # Wait for both threads to finish
+        drce_thread.join()
+    except KeyboardInterrupt as e:
+        # If a signal is received, ignore the threads, simplest solution for the moment
+        pass
 
-    # try:
-    #     # Wait for both threads to finish
-    #     drce_thread.join()
-    # except ThreadInterrupt:
-    #     # If a signal is received, interrupt the threads and wait for them to finish
-    #     drce_thread.join()
-
-    logging.info("exiting")
+    drce.logger.info("exiting")
 
 
 if __name__ == "__main__":
