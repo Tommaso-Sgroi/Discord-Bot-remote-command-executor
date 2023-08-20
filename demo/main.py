@@ -44,7 +44,8 @@ def start(client, options):
     try:
         # Wait for both threads to finish
         drce_thread.join()
-    except KeyboardInterrupt as e:
+        drce.logger.info('DRCE thread stopped')
+    except KeyboardInterrupt:
         # If a signal is received, ignore the threads, simplest solution for the moment
         pass
 

@@ -34,11 +34,10 @@ actually exist 21 command to interpreter... gl
 """
 import re
 import argparse
-import datetime
-
 import discord
 
 from drce.commands.commands_archetypes import Command, NullCommand, all_
+from drce.exceptions.exception import HelpException
 from drce.factory.simple_command_factory import SimpleCommandFactory
 from drce.reader.reader import Reader
 from drce.token.tokens import VoidToken, DistroyToken, StringToken
@@ -97,7 +96,50 @@ class DistroyInterpreter:
     """Separator for strings"""
 
     def __init__(self, client: discord.Client, reader: Reader):
-        parser = argparse.ArgumentParser(description='Distroy command input parser')
+        class FixedParser(argparse.ArgumentParser):
+            """
+            A temporary class used to fix a bug in `argparse.ArgumentParser`.
+
+            This class must not be used outside its intended purpose.
+
+            This bug causes the program to exit even when the 'exit_on_error' flag is set to False. This class
+            overrides the `argparse.ArgumentParser.error` method by raising a new `argparse.ArgumentError` with an
+            error message, without exiting the program. This behavior is designed specifically for the
+            `DistroyInterpreter` class, as exiting on error is not the desired behavior.
+
+            .. note::
+                This workaround should only be used in conjunction with the `DistroyInterpreter` class.
+
+            :param status: The exit status code. Defaults to None.
+            :type status: int, optional
+            :param message: The exit message. Defaults to None.
+            :type message: str, optional
+            """
+
+            def exit(self, status: int = ..., message: str | None = ...):
+                """
+                Override of `argparse.ArgumentParser.exit` method.
+
+                In this case, we don't want to terminate the thread from `argparse`.
+
+                :raises argparse.ArgumentError: An exception with the provided exit message.
+                """
+                pass
+
+            def error(self, message: str):
+                """
+                Override of `argparse.ArgumentParser.error` method.
+
+                The original method of `argparse.ArgumentParser` invokes `exit` even if the 'exit_on_error' flag is
+                set to False. This overridden method raises an `argparse.ArgumentError` with the provided exit
+                message instead.
+
+                :raises argparse.ArgumentError: An exception with the provided exit message.
+                """
+                raise argparse.ArgumentError(message=message, argument=None)
+
+        parser = FixedParser(description='DRCE command input parser', exit_on_error=False, add_help=True)
+
         # Optional positional argument
         parser.add_argument(self.add_separator_on_argument(action_), type=str,
                             help='Action to be executed, 1 argument needed')
@@ -114,7 +156,8 @@ class DistroyInterpreter:
                             help='Target on which apply the consequence of a command. Example the give command')
 
         self.parser = parser
-        self.command = ""
+
+        self.command = ''
         self.reader = reader
         self._command_factory = SimpleCommandFactory(client)
 
@@ -123,7 +166,6 @@ class DistroyInterpreter:
         DistroyInterpreter._string_token.union(tokens)
 
     def read(self):
-        print_help()
         self.command = self.reader.read()
 
     def run(self) -> Command:
@@ -137,6 +179,12 @@ class DistroyInterpreter:
         values = dict()
         args = self.parser.parse_args(tokens)
 
+        # check if the user asked for help. '-h' is default in argparse
+        if DistroyInterpreter.add_separator_on_argument('h') in tokens or \
+                '-h' in tokens or \
+                DistroyInterpreter.add_separator_on_argument('help') in tokens:
+            raise HelpException()
+
         print(args)
         values[action_] = DistroyToken(args.action) if args.action is not None else VoidToken()
         values[where_] = DistroyToken(args.where) if args.where is not None else VoidToken()
@@ -148,16 +196,12 @@ class DistroyInterpreter:
 
     # --target 871629604073373706 --action unban --type user --where 829700927418007553
 
+    def print_help(self):
+        self.parser.print_help()
+
+    def print_usage(self, file=None):
+        self.parser.print_usage(file)
+
     @staticmethod
     def add_separator_on_argument(arg):
         return DistroyInterpreter._separator + arg
-
-
-def print_help():
-    print(f"--action {[ban_, kick_, unban_, delete_, reset_, edit_, add_, use_, give_]}",
-          f"--type {[user_, role_, channel_, category_, wrapped_]}",
-          f"--target {['target_id', all_]}",
-          f"--where {['guild_id', all_]}",
-          f"--to {['user_id', all_]}",
-          sep='\n'
-          )
