@@ -32,6 +32,7 @@ expected behaviour:
 
 actually exist 21 command to interpreter... gl
 """
+import logging
 import re
 import argparse
 import discord
@@ -89,13 +90,10 @@ ban_, kick_, unban_, delete_, reset_, edit_, add_, use_, give_ \
 
 class DistroyInterpreter:
     _void_token = VoidToken()
-    """Shared void token for not instantiate a new one every time"""
 
-    _string_token = {action_, where_, type_, target_, to_}
-    _separator = "--"
-    """Separator for strings"""
+    def __init__(self, client: discord.Client, reader: Reader, separator='--', string_token: set[str] = None,
+                 logger: logging.Logger = None):
 
-    def __init__(self, client: discord.Client, reader: Reader):
         class FixedParser(argparse.ArgumentParser):
             """
             A temporary class used to fix a bug in `argparse.ArgumentParser`.
@@ -138,11 +136,16 @@ class DistroyInterpreter:
                 """
                 raise argparse.ArgumentError(message=message, argument=None)
 
+        self._separator = separator
+        self._string_token = {action_, where_, type_, target_, to_}
+        if string_token is not None:
+            self._string_token.union(string_token)
+
         parser = FixedParser(description='DRCE command input parser', exit_on_error=False, add_help=True)
 
         # Optional positional argument
-        parser.add_argument(self.add_separator_on_argument(action_), type=str,
-                            help='Action to be executed, 1 argument needed')
+        parser.add_argument(self.add_separator_on_argument(action_), type=str, nargs=1,
+                            help='Action name to be executed, 1 argument needed')
         parser.add_argument(self.add_separator_on_argument(where_), type=str, nargs='*',
                             help='Guild/Server id where execute the action, one or more arguments needed. "all" means '
                                  + 'al possible guilds')
@@ -156,43 +159,53 @@ class DistroyInterpreter:
                             help='Target on which apply the consequence of a command. Example the give command')
 
         self.parser = parser
-
+        self.logger = logger
         self.command = ''
         self.reader = reader
         self._command_factory = SimpleCommandFactory(client)
 
-    @staticmethod
-    def add_tokens(*tokens):
-        DistroyInterpreter._string_token.union(tokens)
+    def add_tokens(self, *tokens):
+        self._string_token.union(tokens)
 
-    def read(self):
-        self.command = self.reader.read()
+    def read(self) -> str:
+        return self.reader.read()
 
-    def run(self) -> Command:
-        command = self.parse_command(self.command)
+    def run(self, command_string: str) -> Command:
+        command = self.parse_command(command_string)
         return command
         # --action unban --type user --target 287947825587683328 --where 829700927418007553
 
     def parse_command(self, string) -> Command:
         tokens = re.split('\\s+', string)  # split string at 1-N spaces
 
-        values = dict()
+        # values = dict()
         args = self.parser.parse_args(tokens)
 
         # check if the user asked for help. '-h' is default in argparse
-        if DistroyInterpreter.add_separator_on_argument('h') in tokens or \
+        if self.add_separator_on_argument('h') in tokens or \
                 '-h' in tokens or \
-                DistroyInterpreter.add_separator_on_argument('help') in tokens:
+                self.add_separator_on_argument('help') in tokens:
             raise HelpException()
 
-        print(args)
-        values[action_] = DistroyToken(args.action) if args.action is not None else VoidToken()
-        values[where_] = DistroyToken(args.where) if args.where is not None else VoidToken()
-        values[type_] = DistroyToken(args.type) if args.type is not None else VoidToken()
-        values[target_] = DistroyToken(args.target) if args.target is not None else VoidToken()
-        values[to_] = DistroyToken(args.to) if args.to is not None else VoidToken()
+        if self.logger is not None:
+            self.logger.debug('interpreter input args: %s', args)
 
-        return self._command_factory.create_command(values)
+        # values[action_] = DistroyToken(args.action) if args.action is not None else DistroyInterpreter._void_token
+        # values[where_] = DistroyToken(args.where) if args.where is not None else DistroyInterpreter._void_token
+        # values[type_] = DistroyToken(args.type) if args.type is not None else DistroyInterpreter._void_token
+        # values[target_] = DistroyToken(args.target) if args.target is not None else DistroyInterpreter._void_token
+        # values[to_] = DistroyToken(args.to) if args.to is not None else DistroyInterpreter._void_token
+
+        # create a dictionary where the key is a string_token (e.g. {action_, where_, type_, target_, to_})
+        # which tells how to create the command to the command factory
+        values = {
+            key: DistroyToken(getattr(args, key)) if getattr(args, key) is not None else DistroyInterpreter._void_token
+            for key in self._string_token
+        }
+
+        command: Command = self._command_factory.create_command(values)
+        command.set_logger(self.logger)
+        return command
 
     # --target 871629604073373706 --action unban --type user --where 829700927418007553
 
@@ -202,6 +215,5 @@ class DistroyInterpreter:
     def print_usage(self, file=None):
         self.parser.print_usage(file)
 
-    @staticmethod
-    def add_separator_on_argument(arg):
-        return DistroyInterpreter._separator + arg
+    def add_separator_on_argument(self, arg):
+        return self._separator + arg

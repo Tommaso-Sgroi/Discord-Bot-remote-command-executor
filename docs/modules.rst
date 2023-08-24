@@ -5,5 +5,5 @@ Discord-Bot-remote-command-executor-2.0
    :maxdepth: 4
 
    drce
-   src
+   demo
    main

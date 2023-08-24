@@ -20,10 +20,8 @@ def execute_drce(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
     wait_for_bot_start(drce_bot)
     while True:
         try:
-            interpreter.read()
-            command = interpreter.run()
-
-            command.set_logger(drce_bot.logger)
+            command_str = interpreter.read()
+            command = interpreter.run(command_str)
 
             future: asyncio.Future = executor.run(command)
             result = future.result()  # wait for the result
