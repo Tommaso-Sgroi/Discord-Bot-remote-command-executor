@@ -35,6 +35,8 @@ def execute_drce(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
             continue
 
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             drce_bot.logger.error("error during execution of drce loop: %s", e)
 
 

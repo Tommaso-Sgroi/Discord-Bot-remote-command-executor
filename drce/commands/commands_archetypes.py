@@ -46,10 +46,12 @@ class Command(abc.ABC):
         raise NotImplementedError("Need to implement this method for correct behaviour")
 
     def log_info(self, msg):
-        self.get_logger().debug(f"[{self.__class__.__name__}] {msg}")
+        if self.logger is not None:
+            self.logger.debug(f"[{self.__class__.__name__}] {msg}")
 
     def log_error(self, msg, error: Exception):
-        self.get_logger().debug(f"[{self.__class__.__name__}] {msg}, {error}")
+        if self.logger is not None:
+            self.logger.debug(f"[{self.__class__.__name__}] {msg}, {error}")
 
     def get_logger(self):
         return self.logger

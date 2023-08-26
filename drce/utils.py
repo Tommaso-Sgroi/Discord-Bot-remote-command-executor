@@ -13,8 +13,8 @@ def new_command_executor(client: discord.Client):
     return DistroyExecutor(client)
 
 
-def new_command_interpreter(client: discord.Client, reader: Reader):
-    return DistroyInterpreter(client, reader)
+def new_command_interpreter(client: discord.Client, reader: Reader, logger: logging.Logger):
+    return DistroyInterpreter(client, reader, logger=logger)
 
 
 def create_custom_logger(logger_name, log_file=None):

@@ -35,14 +35,17 @@ actually exist 21 command to interpreter... gl
 import logging
 import re
 import argparse
+from enum import Enum
+from typing import List
+
 import discord
 
-from drce.commands.commands_archetypes import Command, NullCommand, all_
-from drce.exceptions.exception import HelpException
-from drce.factory.simple_command_factory import SimpleCommandFactory
-from drce.reader.reader import Reader
-from drce.token.tokens import VoidToken, DistroyToken, StringToken
-
+from .commands.commands_archetypes import Command, NullCommand, all_
+from .exceptions.exception import HelpException
+from .factory.simple_command_factory import SimpleCommandFactory
+from .reader.reader import Reader
+from .token.tokens import VoidToken, DistroyToken, StringToken
+from .keywords import ActionType, Action, Argument
 """
 command structure
 {
@@ -137,25 +140,25 @@ class DistroyInterpreter:
                 raise argparse.ArgumentError(message=message, argument=None)
 
         self._separator = separator
-        self._string_token = {action_, where_, type_, target_, to_}
+        self._action_args_token = list(Argument)  # TODO keep or remove?
         if string_token is not None:
-            self._string_token.union(string_token)
+            self._action_args_token.extend(string_token)
 
         parser = FixedParser(description='DRCE command input parser', exit_on_error=False, add_help=True)
 
         # Optional positional argument
-        parser.add_argument(self.add_separator_on_argument(action_), type=str, nargs=1,
+        parser.add_argument(self.add_separator_on_argument(Argument.ACTION.value), type=str, default=None,
                             help='Action name to be executed, 1 argument needed')
-        parser.add_argument(self.add_separator_on_argument(where_), type=str, nargs='*',
+        parser.add_argument(self.add_separator_on_argument(Argument.WHERE.value), type=str, nargs='*',
                             help='Guild/Server id where execute the action, one or more arguments needed. "all" means '
                                  + 'al possible guilds')
-        parser.add_argument(self.add_separator_on_argument(type_), type=str,
+        parser.add_argument(self.add_separator_on_argument(Argument.TYPE.value), type=str, default=None,
                             help='Type of target on which to apply the action, for example the action --delete can '
                                  + 'affect multiple types: channels, roles. So it is needed for disambiguate the '
                                  + 'targets')
-        parser.add_argument(self.add_separator_on_argument(target_), type=str, nargs='*',
+        parser.add_argument(self.add_separator_on_argument(Argument.TARGET.value), type=str, nargs='*', default=None,
                             help='Target id on which perform the action. "all" means all possible targets')
-        parser.add_argument(self.add_separator_on_argument(to_), type=str, nargs='*',
+        parser.add_argument(self.add_separator_on_argument(Argument.TO.value), type=str, nargs='*', default=None,
                             help='Target on which apply the consequence of a command. Example the give command')
 
         self.parser = parser
@@ -164,8 +167,8 @@ class DistroyInterpreter:
         self.reader = reader
         self._command_factory = SimpleCommandFactory(client)
 
-    def add_tokens(self, *tokens):
-        self._string_token.union(tokens)
+    def add_tokens(self, tokens):
+        self._action_args_token.extend(list(tokens))
 
     def read(self) -> str:
         return self.reader.read()
@@ -199,12 +202,14 @@ class DistroyInterpreter:
         # create a dictionary where the key is a string_token (e.g. {action_, where_, type_, target_, to_})
         # which tells how to create the command to the command factory
         values = {
-            key: DistroyToken(getattr(args, key)) if getattr(args, key) is not None else DistroyInterpreter._void_token
-            for key in self._string_token
+            key.value: DistroyToken(getattr(args, str(key.value))) if getattr(args, str(key.value)) is not None else
+            DistroyInterpreter._void_token
+            for key in self._action_args_token
         }
 
         command: Command = self._command_factory.create_command(values)
-        command.set_logger(self.logger)
+        if self.logger is not None:
+            command.set_logger(self.logger)
         return command
 
     # --target 871629604073373706 --action unban --type user --where 829700927418007553

@@ -33,7 +33,7 @@ class DiscordRemoteCommandExecutor:
         reader = CommandConsoleReader() if self.options.script_file == '' or self.options.script_file is None \
             else CommandScriptFileReader(self.options.script_file)  # read commands from file if a path was givens
 
-        self.command_interpreter = new_command_interpreter(self.client, reader)
+        self.command_interpreter = new_command_interpreter(self.client, reader, logger)
         self.command_executor = new_command_executor(self.client)
 
         self.can_start = False  # true if the bot has started and the user can start to write and execute commands
