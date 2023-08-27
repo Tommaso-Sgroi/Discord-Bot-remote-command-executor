@@ -1,21 +1,12 @@
-import logging
 import threading
-
 import discord
 
 from demo.bot import new_client
-from demo.thread_interrupt import ThreadInterrupt
 from drce.distroy import DiscordRemoteCommandExecutor
 from drce.distroy_loop import execute_drce
 from drce.configuration import fetch_config
 
 LOGGER_NAME = "drce_logger"
-
-
-# def signal_handler(sig, _):
-#     # Raise the custom exception to interrupt the threads
-#     logging.info(f"received sig {sig}, all threads will be interrupted")
-#     raise ThreadInterrupt
 
 
 def new_drce(client: discord.Client, options):
