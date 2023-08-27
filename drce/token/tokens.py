@@ -1,8 +1,12 @@
 class DistroyToken:
     """
-    Represent a distroy token, it is used for give to a Command or TargetCommand class
-    the right input:
-        'all' guilds, 'all' targets, numeric guild, numeric target
+    Represent a Distroy token, used to provide the appropriate input to a Command or TargetCommand class.
+
+    This token can represent the following inputs:
+    - 'all' guilds
+    - 'all' targets
+    - Numeric guild
+    - Numeric target
     """
 
     def __init__(self, token):
