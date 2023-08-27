@@ -1,94 +1,15 @@
-"""
-This must generate command objects and putting theme into a buffer for
-being executing.
-
-It must care about the options:
-    --file -> read all instruction from a given path file
-    --manual_run -> run the code only when a specific call is find/given
-for example (pseudocode):
-
-options:
-    --file
-expected behaviour:
-    command fetched from file and not from console
-
-
-options:
-    --manual_run
-expected behaviour:
-    command in fetched from console with ainput
-    until a specific call is made so it can run
-    all the command fetched
-
-
-options:
-    --file --manual_run
-expected behaviour:
-    command fetched from file and not from console
-    until a specific call is read so it can run
-    all the command fetched
-
-
-
-actually exist 21 command to interpreter... gl
-"""
 import logging
 import re
 import argparse
-from enum import Enum
-from typing import List
 
 import discord
 
-from .commands.commands_archetypes import Command, NullCommand, all_
+from .commands.commands_archetypes import Command
 from .exceptions.exception import HelpException
 from .factory.simple_command_factory import SimpleCommandFactory
 from .reader.reader import Reader
-from .token.tokens import VoidToken, DistroyToken, StringToken
-from .keywords import ActionType, Action, Argument
-"""
-command structure
-{
-    action (type) id from guild/guilds id/s
-}
-Command examples:
-    #user type implicit
-    ban user user_id from guild_id
-    ban user all from guild_id
-    ban user all from all
-
-    #same for unban and kick
-    #SPECIAL CHARACTER "all"
-
-    delete channel channel_id from guild_id #delete channel
-    delete channel all from guilds_id... / all #delete all channels
-    delete category all from guild_id
-
-    #make role name = perms from guild_id
-    delete role role_id from guild_id
-    delete role all from guild_id/guilds_id/all
-    reset role role_id from guild_id
-    edit role role_id=perms from guild_id
-    give role role_id to user_id from guild_id
-    add role name=perms from guild_id
-    add_and_give role name=perms to user_id from guild_id
-
-    use big_bad_red_button from guild_id
-    use defcon #from all implicit
-    use silent_guild from guild_id
-    use spam from guild_id / guilds_ids / all = "Text..."
-"""
-
-from_, to_ = "from", "to"  # from and to keyword for parse where and target
-action_, where_, type_, target_ = "action", "where", "type", "target"
-
-user_, role_, channel_, category_, wrapped_ = "user", "role", "channel", "category", "wrapped"  # standard types of
-# action_type keyword
-defcon, big_bad_red_button, silent_guild, spam = 'defcon', 'big_bad_red_button', 'silent_guild', 'spam'  # wrapped
-# standard action_type keyword
-
-ban_, kick_, unban_, delete_, reset_, edit_, add_, use_, give_ \
-    = 'ban', 'kick', 'unban', 'delete', 'reset', 'edit', 'add', 'use', 'give'  # actions
+from .token.tokens import VoidToken, DistroyToken
+from .keywords import Argument
 
 
 class DistroyInterpreter:

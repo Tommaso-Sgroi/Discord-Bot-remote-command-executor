@@ -1,5 +1,6 @@
 import logging
 import abc
+from typing import Sequence
 
 all_ = "all"
 """Keyword all"""
@@ -10,11 +11,10 @@ class Command(abc.ABC):
     Represent a general command that can be executed
     """
 
-    def __init__(self, client, guild: list):
+    def __init__(self, client, guild: Sequence[str | int]):
         self.client = client
-        # print(guild, troy_bot.client.get_guild(guild))
         self.string_log = str(self.__class__.__name__) + " "
-        self.logger: logging.Logger = None
+        self.logger = None
         if all_ in guild:
             self.guild = list(client.guilds)
         else:
