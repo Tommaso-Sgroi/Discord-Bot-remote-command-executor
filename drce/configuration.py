@@ -1,15 +1,15 @@
-class Options:
+class Configuration:
 
-    def __init__(self, **kwargv):
-        self.script_file = kwargv["script_file"]
-        self.log_file = kwargv["log_file"] if kwargv["log_file"] != "" else None
-        self.token = kwargv['token']
+    def __init__(self, *, script_file, log_file, token):
+        self.script_file = script_file
+        self.log_file = log_file if log_file != "" else None
+        self.token = token
 
-    def __str__(self) -> str:
-        return "[script file]" + str(self.script_file) + "; " + "[output file]" + str(self.log_file)
+    def __str__(self):
+        return f"Configuration(script_file='{self.script_file}', log_file='{self.log_file}', token='{self.token}')"
 
 
-def fetch_options():
+def fetch_config():
     import argparse
 
     # Instantiate the parser
@@ -28,7 +28,8 @@ def fetch_options():
                         help='An optional integer positional argument')
     args = parser.parse_args()
     if not args.token or args.token == '':
+        import sys
         parser.error("You must put your bot token --token xxxxx")
-        exit(1)
+        sys.exit(1)
 
-    return Options(script_file=args.script_file, log_file=args.log_file, token=args.token)
+    return Configuration(script_file=args.script_file, log_file=args.log_file, token=args.token)

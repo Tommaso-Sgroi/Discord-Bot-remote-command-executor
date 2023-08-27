@@ -7,7 +7,7 @@ from demo.bot import new_client
 from demo.thread_interrupt import ThreadInterrupt
 from drce.distroy import DiscordRemoteCommandExecutor
 from drce.distroy_loop import execute_drce
-from drce.options import fetch_options
+from drce.configuration import fetch_config
 
 LOGGER_NAME = "drce_logger"
 
@@ -53,4 +53,4 @@ def start(client, options):
 
 
 if __name__ == "__main__":
-    start(new_client(), fetch_options())
+    start(new_client(), fetch_config())

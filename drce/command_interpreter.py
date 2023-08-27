@@ -114,12 +114,6 @@ class DistroyInterpreter:
         if self.logger is not None:
             self.logger.debug('interpreter input args: %s', args)
 
-        # values[action_] = DistroyToken(args.action) if args.action is not None else DistroyInterpreter._void_token
-        # values[where_] = DistroyToken(args.where) if args.where is not None else DistroyInterpreter._void_token
-        # values[type_] = DistroyToken(args.type) if args.type is not None else DistroyInterpreter._void_token
-        # values[target_] = DistroyToken(args.target) if args.target is not None else DistroyInterpreter._void_token
-        # values[to_] = DistroyToken(args.to) if args.to is not None else DistroyInterpreter._void_token
-
         # create a dictionary where the key is a string_token (e.g. {action_, where_, type_, target_, to_})
         # which tells how to create the command to the command factory
         values = {
