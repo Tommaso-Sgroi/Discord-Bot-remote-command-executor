@@ -1,10 +1,11 @@
 import discord
-
-from drce.command_executor import DistroyExecutor
-from drce.command_interpreter import DistroyInterpreter
-from drce.reader.reader import Reader
 import sys
 import logging
+
+from .command_executor import DistroyExecutor
+from .command_interpreter import DistroyInterpreter
+from .reader.reader import Reader
+
 
 LOGGER_NAME = "distroy_logger"
 

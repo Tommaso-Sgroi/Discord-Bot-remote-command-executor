@@ -1,6 +1,6 @@
-from drce.reader.console_reader import CommandConsoleReader
-from drce.reader.file_reader import CommandScriptFileReader
-from drce.utils import *
+from .reader.console_reader import CommandConsoleReader
+from .reader.file_reader import CommandScriptFileReader
+from .utils import *
 
 
 class DiscordRemoteCommandExecutor:

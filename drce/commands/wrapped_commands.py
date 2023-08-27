@@ -4,10 +4,10 @@ some sort of commands, giving a faster way to do something
 """
 from collections.abc import Iterable
 
-from drce.commands.channel_commands import *
-from drce.commands.member_manage_type_commands import *
-from drce.commands.roles_commands import *
-from drce.commands.commands_archetypes import all_
+from ..commands.channel_commands import *
+from ..commands.member_manage_type_commands import *
+from ..commands.roles_commands import *
+from ..commands.commands_archetypes import all_
 
 
 class DistroyCommands(Iterable):
@@ -43,14 +43,14 @@ class BigBadRedButton(Command, DistroyCommands):
             await command.run()
 
 
-class Defcon(BigBadRedButton):
-
-    def __init__(self, client):
-        BigBadRedButton.__init__(self, client, [all_])
-
-    async def run(self):
-        self.log_info(f"DEFCON ACTIVATED... ALL GUILDS WILL BE AFFECTED!")
-        await super().run()
+# class Defcon(BigBadRedButton):
+#
+#     def __init__(self, client):
+#         BigBadRedButton.__init__(self, client, [all_])
+#
+#     async def run(self):
+#         self.log_info(f"DEFCON ACTIVATED... ALL GUILDS WILL BE AFFECTED!")
+#         await super().run()
 
 
 class SilentGuild(EditRoleCommand):

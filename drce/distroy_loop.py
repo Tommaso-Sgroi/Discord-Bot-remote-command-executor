@@ -1,11 +1,12 @@
 import argparse
 import asyncio
 
-import drce.distroy
-from drce.exceptions.exception import HelpException
+
+from . import distroy
+from .exceptions.exception import HelpException
 
 
-def wait_for_bot_start(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
+def wait_for_bot_start(drce_bot: distroy.DiscordRemoteCommandExecutor):
     """Busy waiting for discord bot starting"""
     import time
     while not drce_bot.can_start:
@@ -13,7 +14,7 @@ def wait_for_bot_start(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
         time.sleep(0.5)
 
 
-def execute_drce(drce_bot: drce.distroy.DiscordRemoteCommandExecutor):
+def execute_drce(drce_bot: distroy.DiscordRemoteCommandExecutor):
     interpreter = drce_bot.command_interpreter
     executor = drce_bot.command_executor
 

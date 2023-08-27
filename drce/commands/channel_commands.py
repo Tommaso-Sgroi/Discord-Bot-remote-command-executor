@@ -1,4 +1,4 @@
-from drce.commands.commands_archetypes import *
+from ..commands.commands_archetypes import *
 
 
 class DeleteChannelCommand(TargetCommand):

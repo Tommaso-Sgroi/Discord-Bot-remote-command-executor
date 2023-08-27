@@ -3,7 +3,7 @@ from abc import ABC
 import discord
 from discord import Permissions
 
-from drce.commands.commands_archetypes import *
+from ..commands.commands_archetypes import *
 
 
 class RoleCommand(TargetCommand, ABC):

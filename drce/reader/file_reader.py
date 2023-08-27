@@ -1,4 +1,4 @@
-from drce.reader.reader import Reader
+from .reader import Reader
 
 
 class CommandScriptFileReader(Reader):
